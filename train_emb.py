@@ -133,7 +133,9 @@ eval_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['test']))]
 
 def main():
     print(train_path)
-    run_train_eval(DATA_DIR, CONFIG_PATH, train_path, split=True, eval_=True)
+    basename = 'cnr-2000'
+    run_train_eval(DATA_DIR, CONFIG_PATH, train_path,
+                   basename, split=True, eval_=True)
     # output_embedding()
 
 
