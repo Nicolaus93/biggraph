@@ -14,8 +14,8 @@ def get_torchbiggraph_config(num_partitions=1):
         # I/O data
         entity_path=entities_base,
         edge_paths=[
-            "/data/graphs/cnr-2000/train.txt",
-            "/data/graphs/cnr-2000/test.txt",
+            "/data/graphs/cnr-2000/train_partitioned.txt",
+            "/data/graphs/cnr-2000/test_partitioned.txt",
         ],
         checkpoint_path=checkpoints,  # example: 'model/cnr2000'
 

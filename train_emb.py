@@ -5,7 +5,7 @@ import h5py
 import attr
 from pathlib import Path
 from torchbiggraph.converters.import_from_tsv import convert_input_data
-from torchbiggraph.config import add_to_sys_path, parse_config, ConfigFileLoader
+from torchbiggraph.config import add_to_sys_path, ConfigFileLoader
 from torchbiggraph.eval import do_eval
 from torchbiggraph.train import train
 from torchbiggraph.util import (
@@ -52,19 +52,19 @@ def random_split_file(fpath, train_frac=0.9, shuffle=False):
             out_tf_test.write(line)
 
 
-def run_train_eval(data_dir, config_path, train_path, basename, split=False,
+def run_train_eval(data_dir, config_path, basename, split=False,
                    eval_=False):
     data_path = data_dir / (basename + '.tab')
     if split:
         random_split_file(data_path)
 
     loader = ConfigFileLoader()
-    config = loader.load_config("config.py", None)
+    config = loader.load_config(config_path, None)
     set_logging_verbosity(config.verbose)
     subprocess_init = SubprocessInitializer()
     subprocess_init.register(setup_logging, config.verbose)
     subprocess_init.register(add_to_sys_path, loader.config_dir.name)
-    input_edge_paths = [data_dir / name for name in FILENAMES]
+    input_edge_paths = [data_dir / name for name in FILENAMES.values()]
     output_train_path, output_test_path = config.edge_paths
 
     convert_input_data(
@@ -126,16 +126,14 @@ FILENAMES = {
     'test': 'test.txt'
 }
 
-edge_paths = [DATA_DIR / name for name in FILENAMES.values()]
-train_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['train']))]
-eval_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['test']))]
+# edge_paths = [DATA_DIR / name for name in FILENAMES.values()]
+# train_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['train']))]
+# eval_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['test']))]
 
 
 def main():
-    print(train_path)
     basename = 'cnr-2000'
-    run_train_eval(DATA_DIR, CONFIG_PATH, train_path,
-                   basename, split=True, eval_=True)
+    run_train_eval(DATA_DIR, CONFIG_PATH, basename, split=True, eval_=True)
     # output_embedding()
 
 
