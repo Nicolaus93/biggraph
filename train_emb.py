@@ -74,22 +74,16 @@ def run_train_eval(data_dir, config_path, basename, split=False,
         config.edge_paths,
         input_edge_paths,
         lhs_col=0,
-        rhs_col=2,
+        rhs_col=1,
         rel_col=None,
         dynamic_relations=False,
     )
 
     train_config = attr.evolve(config, edge_paths=[output_train_path])
     train(train_config, subprocess_init=subprocess_init)
-
-    # train_config = parse_config(config_path)
-    # train_config = attr.evolve(train_config, edge_paths=train_path)
-    # train(train_config)
-
     print("Trained!")
+
     if eval_:
-        # eval_config = attr.evolve(train_config, edge_paths=eval_path)
-        # do_eval(eval_config)
         relations = [attr.evolve(r, all_negs=True) for r in config.relations]
         eval_config = attr.evolve(
             config, edge_paths=[output_test_path],
