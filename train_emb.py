@@ -15,12 +15,6 @@ from torchbiggraph.util import (
 )
 
 
-def convert_path(fname):
-    basename, _ = os.path.splitext(fname)
-    out_dir = basename + '_partitioned'
-    return out_dir
-
-
 def random_split_file(fpath, train_frac=0.9, shuffle=False):
     root = os.path.dirname(fpath)
 
@@ -58,12 +52,12 @@ def random_split_file(fpath, train_frac=0.9, shuffle=False):
             out_tf_test.write(line)
 
 
-def run_train_eval(data_path, config_path, train_path, split=False,
+def run_train_eval(data_dir, config_path, train_path, basename, split=False,
                    eval_=False):
+    data_path = data_dir / (basename + '.tab')
     if split:
         random_split_file(data_path)
 
-    data_dir = Path("/data")
     loader = ConfigFileLoader()
     config = loader.load_config("config.py", None)
     set_logging_verbosity(config.verbose)
@@ -119,22 +113,27 @@ def output_embedding():
     print("and has a size of: {}".format(embedding.shape))
 
 
-DATA_PATH = "/data/graphs/cnr-2000/cnr-2000.tab"
-DATA_DIR = "/data/graphs/cnr-2000"
+def convert_path(fname):
+    basename, _ = os.path.splitext(fname)
+    out_dir = basename + '_partitioned'
+    return out_dir
+
+
+DATA_DIR = Path("/data/graphs/cnr-2000")
 CONFIG_PATH = "config.py"
 FILENAMES = {
     'train': 'train.txt',
     'test': 'test.txt'
 }
 
-edge_paths = [os.path.join(DATA_DIR, name) for name in FILENAMES.values()]
+edge_paths = [DATA_DIR / name for name in FILENAMES.values()]
 train_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['train']))]
 eval_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['test']))]
 
 
 def main():
     print(train_path)
-    run_train_eval(DATA_PATH, CONFIG_PATH, train_path, split=True, eval_=True)
+    run_train_eval(DATA_DIR, CONFIG_PATH, train_path, split=True, eval_=True)
     # output_embedding()
 
 
