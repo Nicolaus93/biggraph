@@ -7,15 +7,15 @@ def get_torchbiggraph_config(num_partitions=1):
     """
     # entities_base = os.path.join("/data/", basename)
     # checkpoints = os.path.join("/data/models", basename)
-    entities_base = "/data/cnr-2000"
+    entities_base = "/data/models/cnr-2000"
     checkpoints = "/data/models/cnr-2000"
 
     config = dict(
         # I/O data
         entity_path=entities_base,
         edge_paths=[
-            "/data/graphs/cnr-2000/train_partitioned.txt",
-            "/data/graphs/cnr-2000/test_partitioned.txt",
+            "/data/graphs/cnr-2000/train_partitioned",
+            "/data/graphs/cnr-2000/test_partitioned",
         ],
         checkpoint_path=checkpoints,  # example: 'model/cnr2000'
 

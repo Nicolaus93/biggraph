@@ -79,6 +79,7 @@ def run_train_eval(data_dir, config_path, basename, split=False,
         dynamic_relations=False,
     )
 
+    # update the config edge_paths and train
     train_config = attr.evolve(config, edge_paths=[output_train_path])
     train(train_config, subprocess_init=subprocess_init)
     print("Trained!")
@@ -90,21 +91,6 @@ def run_train_eval(data_dir, config_path, basename, split=False,
             relations=relations,
             num_uniform_negs=0)
         do_eval(eval_config, subprocess_init=subprocess_init)
-
-
-def output_embedding():
-    with open(os.path.join(DATA_DIR, "dictionary.json"), "rt") as tf:
-        dictionary = json.load(tf)
-
-    link = "0"
-    offset = dictionary["entities"]["link"].index(link)
-    print("our offset for link ", link, " is: ", offset)
-
-    with h5py.File("model/test_1/embeddings_link_4.v10.h5", "r") as hf:
-        embedding = hf["embeddings"][offset, :]
-
-    print("Embedding looks like this: {}".format(embedding))
-    print("and has a size of: {}".format(embedding.shape))
 
 
 def convert_path(fname):
@@ -120,15 +106,10 @@ FILENAMES = {
     'test': 'test.txt'
 }
 
-# edge_paths = [DATA_DIR / name for name in FILENAMES.values()]
-# train_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['train']))]
-# eval_path = [convert_path(os.path.join(DATA_DIR, FILENAMES['test']))]
-
 
 def main():
     basename = 'cnr-2000'
     run_train_eval(DATA_DIR, CONFIG_PATH, basename, split=True, eval_=True)
-    # output_embedding()
 
 
 if __name__ == "__main__":
