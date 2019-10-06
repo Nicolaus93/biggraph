@@ -1,6 +1,7 @@
 import faiss
 import numpy as np
 import linecache
+import json
 
 
 def train_search(data):
@@ -13,11 +14,16 @@ def train_search(data):
     return index
 
 
-def check(nodes, k, emb, ind, file):
+def check(nodes, k, emb, ind, f):
     """
-    emb is a 2-d numpy array of embeddings
+    nodes - ids of the nodes we want to check
+    k     - nearest neighbours
+    emb   - a 2-d numpy array of embeddings
+    ind   - index built with faiss
+    f     - file containing urls
     read https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python
     how to print with different colours
+
     """
     if len(nodes) == 1:
         dist, ind = ind.search(emb[nodes].reshape(1, -1), k)
@@ -33,8 +39,13 @@ def check(nodes, k, emb, ind, file):
 
 
 if __name__ == '__main__':
-    x = np.load('node_embeddings/cnr-2000_d64wL30cS20wPN20p2q1numS40e100.npy')
+    # x = np.load('node_embeddings/cnr-2000_d64wL30cS20wPN20p2q1numS40e100.npy')
+    with open("/data/models/cnr-2000/entity_names_link_0.json", "rt") as tf:
+        entities_list = json.load(tf)
+
+    x = np.load("/data/models/cnr-2000/embeddings_link_0.v50.h5")
     idx = train_search(x)
-    nodes = np.random.randint(0, len(x), size=10)
+    # nodes = np.random.randint(0, len(x), size=5)
+    nodes = [int(entities_list[i]) for i in range(5)]
     k = 6
-    check(nodes, k, x, idx, 'graphs/cnr-2000.urls')
+    check(nodes, k, x, idx, '/data/graphs/cnr-2000/cnr-2000.urls')
