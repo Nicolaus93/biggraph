@@ -150,7 +150,7 @@ def main():
         description='Generate embeddings on given graph.')
     parser.add_argument('--data_dir', type=Path, default='data',
                         help='where to save processed data')
-    parser.add_argument('--basename', type=str, default='cnr-2000',
+    parser.add_argument('--basename', type=str, default='indochina-2004',
                         help='name of the graph to use')
     parser.add_argument('--config', type=Path, default=Path('config.py'),
                         help='Path to config file')
