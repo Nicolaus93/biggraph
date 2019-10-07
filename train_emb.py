@@ -148,7 +148,7 @@ def main():
     setup_logging()
     parser = argparse.ArgumentParser(
         description='Generate embeddings on given graph.')
-    parser.add_argument('--data_dir', type=Path, default='/data',
+    parser.add_argument('--data_dir', type=Path, default='/data/graphs',
                         help='where to save processed data')
     parser.add_argument('--basename', type=str, default='indochina-2004',
                         help='name of the graph to use')
