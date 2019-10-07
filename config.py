@@ -1,23 +1,23 @@
-# entities_base = '../tab_graphs/cnr2000'
+from pathlib import Path
+
+BASENAME = "indochina-2004"
 
 
 def get_torchbiggraph_config(num_partitions=1):
     """
     basename (str) - name of the graph
     """
-    # entities_base = os.path.join("/data/", basename)
-    # checkpoints = os.path.join("/data/models", basename)
-    entities_base = "/data/models/cnr-2000"
-    checkpoints = "/data/models/cnr-2000"
+    model = Path("/data/models") / BASENAME
+    graphs = Path("data/graphs") / BASENAME
 
     config = dict(
         # I/O data
-        entity_path=entities_base,
+        entity_path=model,
         edge_paths=[
-            "/data/graphs/cnr-2000/train_partitioned",
-            "/data/graphs/cnr-2000/test_partitioned",
+            graphs / "train_partitioned",
+            graphs / "test_partitioned",
         ],
-        checkpoint_path=checkpoints,  # example: 'model/cnr2000'
+        checkpoint_path=model,
 
         # Graph structure
         entities={
@@ -30,6 +30,7 @@ def get_torchbiggraph_config(num_partitions=1):
             'operator': 'none',
         }],
 
+        verbose=True,
         dynamic_relations=False,
 
         # Scoring model
