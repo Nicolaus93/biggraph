@@ -53,4 +53,5 @@ if __name__ == '__main__':
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
-    check(nodes, k, x, idx, '/data/graphs/cnr-2000/cnr-2000.urls')
+    check(nodes, k, x, idx, '/data/graphs/cnr-2000/cnr-2000.urls',
+          entities_list)
