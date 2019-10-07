@@ -89,7 +89,7 @@ def random_split_file(fpath, train_frac=0.9, shuffle=False):
 
 def run_train_eval(data_dir, config_path, basename, split=False,
                    eval_=False):
-    tab_graph = data_dir / (basename + '.tab')
+    tab_graph = data_dir / basename / (basename + '.tab')
     train_f, test_f = random_split_file(tab_graph)
 
     loader = ConfigFileLoader()
