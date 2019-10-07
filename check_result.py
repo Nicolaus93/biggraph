@@ -6,7 +6,9 @@ import h5py
 
 
 def train_search(data):
-    # train similarity search model
+    """train similarity search model
+        as explained in faiss tutorial.
+    """
     nb, d = data.shape
     index = faiss.IndexFlatL2(d)   # build the index
     print("Index trained: {}".format(index.is_trained))
@@ -43,13 +45,11 @@ def check(nodes, k, emb, ind, f, ent_list):
 
 
 if __name__ == '__main__':
-    # x = np.load('node_embeddings/cnr-2000_d64wL30cS20wPN20p2q1numS40e100.npy')
     with open("/data/models/cnr-2000/entity_names_link_0.json", "rt") as tf:
         entities_list = json.load(tf)
 
     hf = h5py.File("/data/models/cnr-2000/embeddings_link_0.v50.h5", 'r')
     x = hf.get("embeddings").value
-    # embedding = hf["embeddings"][offset, :]
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
