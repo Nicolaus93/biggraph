@@ -1,7 +1,5 @@
 import os
 import random
-import json
-import h5py
 import attr
 from pathlib import Path
 from torchbiggraph.converters.import_from_tsv import convert_input_data
