@@ -1,4 +1,4 @@
-from pathlib import Path
+from os.path import join
 
 BASENAME = "indochina-2004"
 
@@ -7,8 +7,8 @@ def get_torchbiggraph_config(num_partitions=1):
     """
     basename (str) - name of the graph
     """
-    model = Path("/data/models") / BASENAME
-    graphs = Path("data/graphs") / BASENAME
+    model = join("/data/models", BASENAME)
+    graphs = join("data/graphs", BASENAME)
 
     config = dict(
         # I/O data
