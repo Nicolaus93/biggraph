@@ -14,8 +14,8 @@ def get_torchbiggraph_config(num_partitions=1):
         # I/O data
         entity_path=model,
         edge_paths=[
-            graphs / "train_partitioned",
-            graphs / "test_partitioned",
+            join(graphs, "train_partitioned"),
+            join(graphs, "test_partitioned"),
         ],
         checkpoint_path=model,
 
