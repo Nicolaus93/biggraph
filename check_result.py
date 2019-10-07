@@ -35,11 +35,11 @@ def check(nodes, k, emb, ind, f, ent_list):
         source = int(ent_list[row[0]])
         print('\x1b[0;35;43m' + '{} nearest neighbours of node {}'.format(
             k - 1, source) + '\x1b[0m')
-        print('\x1b[0;35;43m' + linecache.getline(file, source + 1) + '\x1b[0m')
+        print('\x1b[0;35;43m' + linecache.getline(f, source + 1) + '\x1b[0m')
         for node in row[1:]:
             neighbor = int(ent_list[node])
             print("  node {}, {}".format(
-                node, linecache.getline(file, neighbor + 1)))
+                node, linecache.getline(f, neighbor + 1)))
 
 
 if __name__ == '__main__':
