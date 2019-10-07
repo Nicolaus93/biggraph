@@ -2,7 +2,7 @@
 
 To train an embedding, modify the *config.py* file.
 
-Data should be located in the folder "/data/graphs/".
+Data should be located in the folder *"/data/graphs/"*.
 
 Input graphs should be stored in tab separated values. To generate such a graph, you can use for example [webgraph](http://webgraph.di.unimi.it) with the following command 
 
