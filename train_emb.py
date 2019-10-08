@@ -1,4 +1,3 @@
-import os
 import random
 import attr
 import argparse
@@ -50,45 +49,7 @@ def random_split_file(fpath, train_frac=0.9, shuffle=False):
     return train_file, test_file
 
 
-# def random_split_file(fpath, train_frac=0.9, shuffle=False):
-#     root = os.path.dirname(fpath)
-
-#     output_paths = [
-#         os.path.join(root, FILENAMES['train']),
-#         os.path.join(root, FILENAMES['test']),
-#     ]
-#     if all(os.path.exists(path) for path in output_paths):
-#         print("Found some files that indicate that the input data "
-#               "has already been shuffled and split, not doing it again.")
-#         print("These files are: %s" % ", ".join(output_paths))
-#         return
-
-#     print('Shuffling and splitting train/test file. This may take a while.')
-#     train_file = os.path.join(root, FILENAMES['train'])
-#     test_file = os.path.join(root, FILENAMES['test'])
-
-#     print('Reading data from file: ', fpath)
-#     with open(fpath, "rt") as in_tf:
-#         lines = in_tf.readlines()
-
-#     if shuffle:
-#         print('Shuffling data')
-#         random.shuffle(lines)
-
-#     split_len = int(len(lines) * train_frac)
-
-#     print('Splitting to train and test files')
-#     with open(train_file, "wt") as out_tf_train:
-#         for line in lines[:split_len]:
-#             out_tf_train.write(line)
-
-#     with open(test_file, "wt") as out_tf_test:
-#         for line in lines[split_len:]:
-#             out_tf_test.write(line)
-
-
-def run_train_eval(data_dir, config_path, basename, split=False,
-                   eval_=False):
+def run_train_eval(data_dir, config_path, basename, eval_=False):
     tab_graph = data_dir / basename / (basename + '.tab')
     train_f, test_f = random_split_file(tab_graph)
 
@@ -100,7 +61,6 @@ def run_train_eval(data_dir, config_path, basename, split=False,
     subprocess_init.register(setup_logging, config.verbose)
     subprocess_init.register(add_to_sys_path, loader.config_dir.name)
 
-    # input_edge_paths = [data_dir / name for name in FILENAMES.values()]
     input_edge_paths = [train_f, test_f]
     output_train_path, output_test_path = config.edge_paths
 
@@ -130,18 +90,10 @@ def run_train_eval(data_dir, config_path, basename, split=False,
         do_eval(eval_config, subprocess_init=subprocess_init)
 
 
-# def convert_path(fname):
-#     basename, _ = os.path.splitext(fname)
-#     out_dir = basename + '_partitioned'
-#     return out_dir
-
-
-# DATA_DIR = Path("/data/graphs/cnr-2000")
-# CONFIG_PATH = "config.py"
-FILENAMES = {
-    'train': 'train.txt',
-    'test': 'test.txt'
-}
+# FILENAMES = {
+#     'train': 'train.txt',
+#     'test': 'test.txt'
+# }
 
 
 def main():
@@ -161,7 +113,7 @@ def main():
     basename = args.basename
     config_path = args.config
     data_dir = args.data_dir
-    run_train_eval(data_dir, config_path, basename, split=True, eval_=True)
+    run_train_eval(data_dir, config_path, basename, eval_=True)
 
 
 if __name__ == "__main__":

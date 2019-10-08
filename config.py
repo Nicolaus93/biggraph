@@ -21,7 +21,7 @@ def get_torchbiggraph_config(num_partitions=1):
 
         # Graph structure
         entities={
-            'link': {'num_partitions': 1},
+            'link': {'num_partitions': 20},
         },
         relations=[{
             'name': 'follow',
