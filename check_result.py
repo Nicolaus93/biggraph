@@ -4,7 +4,8 @@ import linecache
 import json
 import h5py
 import argparse
-from pathlib import Path
+# from pathlib import Path
+from os.path import join
 
 
 def train_search(data):
@@ -54,18 +55,18 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     basename = args.basename
-    model_path = Path("/data/models") / basename
-    assert model_path.is_dir(), "model dir not found"
+    model_path = join("/data/models", basename)
+    # assert model_path.is_dir(), "model dir not found"
 
-    with open(model_path / "entity_names_link_0.json", "rt") as tf:
+    with open(join(model_path, "entity_names_link_0.json"), "rt") as tf:
         entities_list = json.load(tf)
 
-    hf = h5py.File(model_path / "embeddings_link_0.v50.h5", 'r')
+    hf = h5py.File(join(model_path, "embeddings_link_0.v50.h5"), 'r')
     x = hf.get("embeddings").value
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
-    urls_file = Path('/data/graphs/') / basename / (basename + '.urls')
+    urls_file = join('/data/graphs/', basename, (basename + '.urls'))
     if urls_file.exists():
         check(nodes, k, x, idx, urls_file, entities_list)
     else:
