@@ -67,7 +67,8 @@ if __name__ == '__main__':
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
     urls_file = join('/data/graphs/', basename, (basename + '.urls'))
-    if urls_file.exists():
+    try:
         check(nodes, k, x, idx, urls_file, entities_list)
-    else:
+    except Exception as e:
+        print("e")
         print("urls file not found!")
