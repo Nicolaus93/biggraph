@@ -90,12 +90,6 @@ def run_train_eval(data_dir, config_path, basename, eval_=False):
         do_eval(eval_config, subprocess_init=subprocess_init)
 
 
-# FILENAMES = {
-#     'train': 'train.txt',
-#     'test': 'test.txt'
-# }
-
-
 def main():
     setup_logging()
     parser = argparse.ArgumentParser(
