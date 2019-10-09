@@ -3,6 +3,8 @@ import numpy as np
 import linecache
 import json
 import h5py
+import argparse
+from pathlib import Path
 
 
 def train_search(data):
@@ -45,13 +47,26 @@ def check(nodes, k, emb, ind, f, ent_list):
 
 
 if __name__ == '__main__':
-    with open("/data/models/cnr-2000/entity_names_link_0.json", "rt") as tf:
+    parser = argparse.ArgumentParser(
+        description='Generate embeddings on given graph.')
+    parser.add_argument('--basename', type=str, default='cnr-2000',
+                        help='name of the graph to use')
+
+    args = parser.parse_args()
+    basename = args.basename
+    model_path = Path("/data/models") / basename
+    assert model_path.is_dir(), "model dir not found"
+
+    with open(model_path / "entity_names_link_0.json", "rt") as tf:
         entities_list = json.load(tf)
 
-    hf = h5py.File("/data/models/cnr-2000/embeddings_link_0.v50.h5", 'r')
+    hf = h5py.File(model_path / "embeddings_link_0.v50.h5", 'r')
     x = hf.get("embeddings").value
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
-    check(nodes, k, x, idx, '/data/graphs/cnr-2000/cnr-2000.urls',
-          entities_list)
+    urls_file = Path('/data/graphs/') / basename / basename + '.urls'
+    if urls_file.exists():
+        check(nodes, k, x, idx, urls_file, entities_list)
+    else:
+        print("urls file not found!")
