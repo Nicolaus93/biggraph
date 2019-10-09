@@ -13,6 +13,7 @@ def get_torchbiggraph_config(num_partitions=1):
     config = dict(
         # I/O data
         entity_path=model,
+        # where to store learnt edges
         edge_paths=[
             join(graphs, "train_partitioned"),
             join(graphs, "test_partitioned"),
