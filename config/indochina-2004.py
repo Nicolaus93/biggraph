@@ -3,10 +3,8 @@ from os.path import join
 BASENAME = "indochina-2004"
 
 
-def get_torchbiggraph_config(num_partitions=1):
-    """
-    basename (str) - name of the graph
-    """
+def get_torchbiggraph_config():
+
     model = join("/data/models", BASENAME)
     graphs = join("data/graphs", BASENAME)
 
