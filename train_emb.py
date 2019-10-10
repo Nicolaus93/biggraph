@@ -51,6 +51,7 @@ def random_split_file(fpath, train_frac=0.9, shuffle=False):
 
 def run_train_eval(data_dir, config_path, basename, eval_=False):
     tab_graph = data_dir / basename / (basename + '.tab')
+    assert tab_graph.exists(), "graph tab file not found."
     train_f, test_f = random_split_file(tab_graph)
 
     loader = ConfigFileLoader()
@@ -95,18 +96,12 @@ def main():
     parser = argparse.ArgumentParser(
         description='Generate embeddings on given graph.')
     parser.add_argument('--data_dir', type=Path, default='/data/graphs',
-                        help='where to save processed data')
+                        help='where to find data')
     parser.add_argument('--basename', type=str, default='cnr-2000',
                         help='name of the graph to use')
-    # parser.add_argument('--config', type=Path,
-    #                     default=Path('config/config.py'),
-    #                     help='Path to config file')
 
     args = parser.parse_args()
-    # assert args.config.exists(), "config file not found"
-    assert args.data_dir.is_dir(), "data dir not found"
     basename = args.basename
-    # config_path = args.config
     config_path = Path("config") / (basename + ".py")
     data_dir = args.data_dir
     run_train_eval(data_dir, config_path, basename, eval_=True)
