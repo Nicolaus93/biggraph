@@ -107,7 +107,7 @@ def main():
     assert args.data_dir.is_dir(), "data dir not found"
     basename = args.basename
     # config_path = args.config
-    config_path = Path("config") / basename
+    config_path = Path("config") / (basename + ".py")
     data_dir = args.data_dir
     run_train_eval(data_dir, config_path, basename, eval_=True)
 
