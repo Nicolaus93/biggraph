@@ -20,20 +20,21 @@ def store_labels(model_path, labels_dict):
     num_partitions = config['entities']['link']['num_partitions']
     for i in range(num_partitions):
         # count the nodes in each partition
-        count_file = "entity_count_link_{}.txt".format(i)
+        count_file = model_path / "entity_count_link_{}.txt".format(i)
         with open(count_file, "rt") as f:
             count = int(f.readline())
         print("Partition {}..".format(i))
         # for each partition build the labels vector associated
         labels = np.zeros(count)
-        links = "entity_names_link_{}.json".format(i)
+        links = model_path / "entity_names_link_{}.json".format(i)
         with open(links, "rt") as tf:
             entities_list = json.load(tf)
         for pos, value in enumerate(tqdm(entities_list)):
             labels[pos] = labels_dict[int(value)]
         # save labels vector
         # TODO: infer the CORRECT name of embeddings
-        h5f = h5py.File('embeddings_link_{}.v50.h5'.format(i), 'a')
+        h5f = h5py.File(model_path / 'embeddings_link_{}.v50.h5'
+                        .format(i), 'a')
         h5f.create_dataset('labels', data=labels)
         h5f.close()
 
