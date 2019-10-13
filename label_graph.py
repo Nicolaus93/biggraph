@@ -3,32 +3,38 @@ import json
 from pathlib import Path
 import tldextract
 from tqdm import tqdm
+import numpy as np
+import h5py
 
 
-def build_dict(model_path):
-
-    if (model_path / "entities_dict").exists():
-        print("entities dict already existing")
-        return
-
-    with open("config.json", "rt") as tf:
+def store_labels(model_path, labels_dict):
+    """
+    model_path (Path)  - model folder path
+    labels_dict (dict) - labels stored in dict
+    TODO: infer the CORRECT name of embeddings
+    """
+    config_dict = model_path / "config.json"
+    with config_dict.open() as tf:
         config = json.load(tf)
 
+    # determine the number of partitions
     num_partitions = config['entities']['link']['num_partitions']
-    entities_dict = dict()
-
     for i in num_partitions:
-
+        # count the nodes in each partition
+        count_file = "entity_count_link_{}.txt".format(i)
+        with open(count_file, "rt") as f:
+            count = int(f.readline())
+        # for each partition build the labels vector associated
+        labels = np.zeros(count)
         links = "entity_names_link_{}.json".format(i)
         with open(links, "rt") as tf:
             entities_list = json.load(tf)
-
         for pos, value in enumerate(entities_list):
-            # store node address in dict: file_num and pos
-            entities_dict[int(value)] = (i, pos)
-
-    with open('entities_dict.json', 'w') as fp:
-        json.dump(entities_dict, fp)
+            labels[pos] = labels_dict[int(value)]
+        # save labels vector
+        h5f = h5py.File('embeddings_link_{}.v50.h5'.format(i), 'w')
+        h5f.create_dataset('labels', data=labels)
+        h5f.close()
 
 
 def assign_labels(urls, labels):
@@ -60,9 +66,9 @@ def assign_labels(urls, labels):
 if __name__ == "__main__":
     labels = {'kh': 1, 'la': 2, 'mm': 3, 'th': 4, 'vn': 5}
     # basename = Path("some_graph")
-    # model = Path("some_model")
-    # urls = Path("graph_urls")
-    # build_dict(model)
-    urls = Path("data/indochina-2004.urls")
+
+    urls = Path("data/graphs/indochina-2004/indochina-2004.urls")
     lab, n = assign_labels(urls, labels)
     print(len(lab), n)
+    model = Path("/data/models/indochina-2004")
+    store_labels(model, lab)
