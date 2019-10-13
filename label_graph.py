@@ -29,10 +29,10 @@ def store_labels(model_path, labels_dict):
         links = "entity_names_link_{}.json".format(i)
         with open(links, "rt") as tf:
             entities_list = json.load(tf)
-        for pos, value in enumerate(entities_list):
+        for pos, value in enumerate(tqdm(entities_list)):
             labels[pos] = labels_dict[int(value)]
         # save labels vector
-        h5f = h5py.File('embeddings_link_{}.v50.h5'.format(i), 'w')
+        h5f = h5py.File('embeddings_link_{}.v50.h5'.format(i), 'a')
         h5f.create_dataset('labels', data=labels)
         h5f.close()
 
@@ -68,8 +68,10 @@ def main(labels, basename):
     TODO: add argparse
     """
     urls = Path("/data/graphs") / basename / (basename + ".urls")
+    print("Assigning labels..")
     lab, n = assign_labels(urls, labels)
     print(len(lab), n)
+    print("Associating labels to embeddings..")
     model = Path("/data/models") / basename
     model = Path("/data/models/indochina-2004")
     store_labels(model, lab)
