@@ -63,12 +63,19 @@ def assign_labels(urls, labels):
     return lab, n
 
 
-if __name__ == "__main__":
-    labels = {'kh': 1, 'la': 2, 'mm': 3, 'th': 4, 'vn': 5}
-    # basename = Path("some_graph")
-
-    urls = Path("data/graphs/indochina-2004/indochina-2004.urls")
+def main(labels, basename):
+    """
+    TODO: add argparse
+    """
+    urls = Path("/data/graphs") / basename / (basename + ".urls")
     lab, n = assign_labels(urls, labels)
     print(len(lab), n)
+    model = Path("/data/models") / basename
     model = Path("/data/models/indochina-2004")
     store_labels(model, lab)
+
+
+if __name__ == "__main__":
+    labels = {'kh': 1, 'la': 2, 'mm': 3, 'th': 4, 'vn': 5}
+    basename = "indochina-2004"
+    main(labels, basename)
