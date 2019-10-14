@@ -27,7 +27,7 @@ def store_labels(model_path, labels_dict, override=False):
         h5_path = model_path / 'embeddings_link_{}.v50.h5'.format(i)
         try:
             h5f = h5py.File(h5_path, 'a')
-            h5f.create_dataset('labels', data=labels)
+            h5f.create_dataset('labels', data=labels, dtype=int)
         except RuntimeError:
             print("Labels already stored!")
             if override:
@@ -75,10 +75,10 @@ def assign_labels(basename, data_folder=Path("/data"), verbose=False):
                 labels_array[pos] = y
                 clusters_count[domain] += 1
         labels_data = dict()
-        labels_data['labels'] = labels
+        # labels_data['labels'] = labels  # do we really need this?
+        labels_data['labels'] = {int(v): k for k, v in labels.items()}
         labels_data['count'] = clusters_count
         labels_data['array'] = labels_array
-        labels_data['num_labels'] = {v: k for k, v in labels.items()}
         if verbose:
             print("Found following labels:")
             print(labels)
@@ -100,7 +100,7 @@ def main(basename):
         labels = json.load(f)
     # save labels in h5 embedding files
     print("Associating labels to embeddings..")
-    store_labels(model, labels["array"])
+    store_labels(model, labels["array"], override=True)
 
 
 if __name__ == "__main__":
