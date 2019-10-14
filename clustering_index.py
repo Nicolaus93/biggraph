@@ -30,7 +30,7 @@ def define_clusters(basename, dim=64):
 
     for partition, _ in iter_partitions(model_path):
         h5f = h5py.File(partition, 'r')
-        x = h5f['embedding']
+        x = h5f['embeddings']
         y = h5f['labels']
         assert len(x) == len(y), "Aborting, x and y have different size."
         pos = Counter()
