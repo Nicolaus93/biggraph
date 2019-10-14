@@ -30,7 +30,7 @@ def define_clusters(basename, dim=64):
         for class_label in labels_dict["num_labels"]:
             cl = int(class_label)
             try:
-                clusters[cl] = np.vstack(clusters[cl], X[Y == cl])
+                clusters[cl] = np.vstack((clusters[cl], X[Y == cl]))
             except KeyError:
                 clusters[cl] = X[Y == cl, :]
 
