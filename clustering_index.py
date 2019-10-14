@@ -36,7 +36,7 @@ def define_clusters(basename, dim=64):
         pos = Counter()
         for i, j in zip(x, y):
             index = pos[j]
-            clusters[j][index] = x
+            clusters[labels_dict["num_labels"][j]][index] = x
             pos[j] += 1
 
     for c in clusters:

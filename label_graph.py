@@ -73,11 +73,12 @@ def assign_labels(basename, data_folder=Path("/data"), verbose=False):
                 # assign label and add it to array
                 y = labels[domain]
                 labels_array[pos] = y
-                clusters_count[y] += 1
+                clusters_count[domain] += 1
         labels_data = dict()
         labels_data['labels'] = labels
         labels_data['count'] = clusters_count
         labels_data['array'] = labels_array
+        labels_data['num_labels'] = {v: k for k, v in labels.items()}
         if verbose:
             print("Found following labels:")
             print(labels)
@@ -99,7 +100,7 @@ def main(basename):
         labels = json.load(f)
     # save labels in h5 embedding files
     print("Associating labels to embeddings..")
-    store_labels(model, labels["array"], override=True)
+    store_labels(model, labels["array"])
 
 
 if __name__ == "__main__":
