@@ -61,7 +61,8 @@ def davies_bouldin_index(clusters):
 
     centroid = [0] * len(clusters)
     avg_distance = [0] * len(clusters)
-    for pos, array in enumerate(clusters):
+    for pos, key in enumerate(clusters):
+        array = clusters[key]
         centroid[pos] = np.mean(array, axis=0)
         avg_distance[pos] = np.mean(array - centroid[pos], axis=0)
 
