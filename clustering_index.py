@@ -41,7 +41,7 @@ def define_clusters(basename, override=False, dim=64):
         Y = h5f["labels"][:]
         assert len(X) == len(Y), "Aborting, x and y have different size."
         # define clusters
-        for class_label in labels_dict["num_labels"]:
+        for class_label in labels_dict["labels"]:
             cl = int(class_label)
             try:
                 clusters[cl] = np.vstack((clusters[cl], X[Y == cl]))
