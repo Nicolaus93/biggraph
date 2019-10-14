@@ -15,7 +15,7 @@ def define_clusters(basename, dim=64):
         model_path - Path
         dim        - dimension of the embeddings
     """
-    model_path = Path("data/models") / basename
+    model_path = Path("/data/models") / basename
     labels_info = model_path / "labels.json"
     with labels_info.open() as tf:
         labels_dict = json.load(tf)
