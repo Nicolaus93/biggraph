@@ -16,7 +16,7 @@ def define_clusters(basename, override=False, dim=64):
         dim        - dimension of the embeddings
     """
     model_path = Path("/data/models") / basename
-    clusters_path = model_path / basename / "clusters"
+    clusters_path = model_path / "clusters"
     if clusters_path.is_dir():
         print("Clusters already existing.")
         if not override:
