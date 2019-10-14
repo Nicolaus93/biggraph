@@ -16,7 +16,7 @@ def store_labels(model_path, labels_dict, override=False):
     for i, value in enumerate(iter_partitions(model_path)):
         partition, count = value
         print("Partition: {}..".format(i))
-        labels = np.zeros(count)
+        labels = np.zeros(count, dtype=int)
         links = model_path / "entity_names_link_{}.json".format(i)
         with open(links, "rt") as tf:
             entities_list = json.load(tf)
