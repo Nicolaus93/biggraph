@@ -95,3 +95,4 @@ if __name__ == "__main__":
         array = h5f["nodes"][:]
         clusters[pos] = array
     indices = davies_bouldin_index(clusters)
+    print("Indices: \n{}".format(indices))
