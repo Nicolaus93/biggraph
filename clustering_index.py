@@ -64,7 +64,8 @@ def davies_bouldin_index(clusters):
     for pos, key in enumerate(clusters):
         array = clusters[key]
         centroid[pos] = np.mean(array, axis=0)
-        avg_distance[pos] = np.mean(array - centroid[pos], axis=0)
+        avg_distance[pos] = np.mean(
+            np.linalg.norm(array - centroid[pos], axis=1))
 
     centroid = np.array(centroid)
     avg_distance = np.array(avg_distance)
@@ -75,7 +76,7 @@ def davies_bouldin_index(clusters):
             if i == j:
                 continue
             index = (avg_distance[i] + avg_distance[j]) \
-                / np.linalg.norm(c1, c2)
+                / np.linalg.norm(c1 - c2)
             if index > best[i]:
                 best[i] = index
     return best
