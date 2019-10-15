@@ -10,7 +10,7 @@ from utils.helper import train_search
 
 def check(nodes, k, emb, ind, f, ent_list):
     """
-    nodes    - ids of the nodes we want to check
+    nodes    - 2d array of nodes we want to check
     k        - nearest neighbours
     emb      - a 2-d numpy array of embeddings
     ind      - index built with faiss
@@ -21,9 +21,9 @@ def check(nodes, k, emb, ind, f, ent_list):
 
     """
     if len(nodes) == 1:
-        dist, ind = ind.search(emb[nodes].reshape(1, -1), k)
+        dist, ind = ind.search(nodes.reshape(1, -1), k)
     else:
-        dist, ind = ind.search(emb[nodes], k)
+        dist, ind = ind.search(nodes, k)
     for row in ind:
         source = int(ent_list[row[0]])
         print('\x1b[0;35;43m' + '{} nearest neighbours of node {}'.format(
@@ -52,7 +52,8 @@ if __name__ == '__main__':
     hf = h5py.File(join(model_path, "embeddings_link_0.v50.h5"), 'r')
     x = hf["embeddings"][:]
     idx = train_search(x)
-    nodes = np.random.randint(0, len(x), size=5)
+    nodes_id = np.random.randint(len(x), size=5)
+    nodes = x[nodes_id, :]
     k = 6
     urls_file = join('/data/graphs/', basename, (basename + '.urls'))
     try:

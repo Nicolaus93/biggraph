@@ -6,6 +6,7 @@ from utils.helper import load_data, iter_partitions, train_search
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from check_result import check
+from os.path import join
 
 
 def bench_k_means(estimator, name, data, labels):
@@ -63,7 +64,8 @@ if __name__ == "__main__":
         entities_list += [i for i in entities]
 
     basename = "indochina-2004"
-    urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
+    # urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
+    urls_file = join('/data/graphs/', basename, (basename + '.urls'))
     k = 10
     idx = train_search(X)
     check(kmeans.centroids, k, X, idx, urls_file, entities_list)
