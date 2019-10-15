@@ -8,17 +8,15 @@ from sklearn.cluster import KMeans
 
 def load_data(model_path):
 
+    x_arrays = []
+    y_arrays = []
     for partition, count in iter_partitions(model_path):
         h5f = h5py.File(partition, 'r')
-        X = h5f["embeddings"][:]
-        Y = h5f["labels"][:]
-        try:
-            X = np.vstack((X, h5f["embeddings"][:]))
-            Y = np.hstack((Y, h5f["labels"][:]))
-        except NameError:
-            X = h5f["embeddings"][:]
-            Y = h5f["labels"][:]
-    return X, Y
+        X = h5f["embeddings"].value
+        Y = h5f["labels"].values
+        x_arrays.append(X)
+        y_arrays.append(Y)
+    return np.vstack(x_arrays), np.hstack(y_arrays)
 
 
 def bench_k_means(estimator, name, data, labels):
