@@ -21,7 +21,7 @@ def load_data(model_path):
     return X, Y
 
 
-def bench_k_means(estimator, name, labels, data):
+def bench_k_means(estimator, name, data, labels):
     estimator.fit(data)
     print(name)
     print('%.2fs\t%i\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f'
@@ -41,8 +41,7 @@ if __name__ == "__main__":
     model_path = Path("/data/models/indochina-2004")
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
-    bench_k_means(KMeans(init='k-means++', n_clusters=classes, n_init=10),
-                  name="k-means++", labels=Y, data=X)
-
-    bench_k_means(KMeans(init='random', n_clusters=classes, n_init=10),
-                  name="random", labels=Y, data=X)
+    algo = KMeans(init='k-means++', n_clusters=classes, n_init=10)
+    bench_k_means(algo, "k-means++", X, Y)
+    algo = KMeans(init='random', n_clusters=classes, n_init=10)
+    bench_k_means(algo, "random", X, Y)
