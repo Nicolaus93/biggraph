@@ -24,16 +24,21 @@ def load_data(model_path):
 def bench_k_means(estimator, name, data, labels):
     estimator.fit(data)
     print(name)
-    print('%.2fs\t%i\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f'
-          % (metrics.homogeneity_score(labels, estimator.labels_),
-             metrics.completeness_score(labels, estimator.labels_),
-             metrics.v_measure_score(labels, estimator.labels_),
-             metrics.adjusted_rand_score(labels, estimator.labels_),
-             metrics.adjusted_mutual_info_score(labels, estimator.labels_,
-                                                average_method='arithmetic'),
-             metrics.silhouette_score(data, estimator.labels_,
-                                      metric='euclidean',
-                                      sample_size=300)))
+    print("homogeneity score: {.2f}".format(
+        metrics.homogeneity_score(labels, estimator.labels_)))
+    print("completeness score: {}".format(
+        metrics.completeness_score(labels, estimator.labels_)))
+    print("v measure score: {}".format(
+        metrics.v_measure_score(labels, estimator.labels_)))
+    print("adjusted rand score: {}".format(
+        metrics.adjusted_rand_score(labels, estimator.labels_)))
+    print("adjusted mutual info score: {}".format(
+        metrics.adjusted_mutual_info_score(labels, estimator.labels_),
+        average_method='arithmetic'))
+    print("silhouette score: {}".format(
+        metrics.silhouette_score(data, estimator.labels_,
+                                 metric='euclidean',
+                                 sample_size=300)))
 
 
 if __name__ == "__main__":
