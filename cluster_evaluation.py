@@ -66,6 +66,6 @@ if __name__ == "__main__":
     basename = "indochina-2004"
     # urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
     urls_file = join('/data/graphs/', basename, (basename + '.urls'))
-    k = 10
+    k = 50
     idx = train_search(X)
     check(kmeans.centroids, k, X, idx, urls_file, entities_list)
