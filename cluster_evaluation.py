@@ -42,7 +42,7 @@ if __name__ == "__main__":
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
     bench_k_means(KMeans(init='k-means++', n_clusters=classes, n_init=10),
-                  name="k-means++", data=X)
+                  name="k-means++", labels=Y, data=X)
 
     bench_k_means(KMeans(init='random', n_clusters=classes, n_init=10),
-                  name="random", data=X)
+                  name="random", labels=Y, data=X)
