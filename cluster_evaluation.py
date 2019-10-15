@@ -24,7 +24,7 @@ def load_data(model_path):
 def bench_k_means(estimator, name, data, labels):
     estimator.fit(data)
     print(name)
-    print("homogeneity score: {.2f}".format(
+    print("homogeneity score: {}".format(
         metrics.homogeneity_score(labels, estimator.labels_)))
     print("completeness score: {}".format(
         metrics.completeness_score(labels, estimator.labels_)))
