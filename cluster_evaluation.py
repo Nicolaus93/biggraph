@@ -46,7 +46,12 @@ if __name__ == "__main__":
     model_path = Path("/data/models/indochina-2004")
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
-    algo = KMeans(init='k-means++', n_clusters=classes, n_init=10)
+    print("X shape: {}".format(X.shape))
+    print("{} classes.".format(classes))
+    algo = KMeans(init='k-means++', n_clusters=classes, n_init=10,
+                  max_iter=1000)
     bench_k_means(algo, "k-means++", X, Y)
-    algo = KMeans(init='random', n_clusters=classes, n_init=10)
+    print("")
+    algo = KMeans(init='random', n_clusters=classes, n_init=10,
+                  max_iter=1000)
     bench_k_means(algo, "random", X, Y)
