@@ -37,7 +37,7 @@ def bench_k_means(estimator, labels, data):
 
 if __name__ == "__main__":
 
-    model_path = Path("data/models/indochina-2004")
+    model_path = Path("/data/models/indochina-2004")
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
     bench_k_means(KMeans(init='k-means++', n_clusters=classes, n_init=10),
