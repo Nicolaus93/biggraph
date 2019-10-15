@@ -42,12 +42,16 @@ def bench_k_means(estimator, name, data, labels):
 
 
 if __name__ == "__main__":
-
+    # todo: add argparse
     model_path = Path("/data/models/indochina-2004")
+    print("Loading data..")
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
     print("X shape: {}".format(X.shape))
     print("{} classes.".format(classes))
+    score = metrics.silhouette_score(X, Y, metric='euclidean',
+                                     sample_size=1000)
+    print("")
     algo = KMeans(init='k-means++', n_clusters=classes, n_init=10,
                   max_iter=1000)
     bench_k_means(algo, "k-means++", X, Y)
