@@ -62,7 +62,7 @@ if __name__ == '__main__':
         entities_list = json.load(tf)
 
     hf = h5py.File(join(model_path, "embeddings_link_0.v50.h5"), 'r')
-    x = hf.get("embeddings").value
+    x = hf["embeddings"].value
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
