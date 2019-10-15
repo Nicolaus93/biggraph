@@ -1,9 +1,11 @@
 import numpy as np
+import faiss
+import json
 from pathlib import Path
-from utils.helper import load_data
+from utils.helper import load_data, iter_partitions, train_search
 from sklearn import metrics
 from sklearn.cluster import KMeans
-import faiss
+from check_result import check
 
 
 def bench_k_means(estimator, name, data, labels):
@@ -53,3 +55,15 @@ if __name__ == "__main__":
     # algo = KMeans(init='random', n_clusters=classes, n_init=10,
     #               max_iter=1000)
     # bench_k_means(algo, "random", X, Y)
+
+    entities_list = []
+    for json_f, _ in iter_partitions(model_path, names=True):
+        with open(json_f, "rt") as f:
+            entities = json.load(f)
+        entities_list += [i for i in entities]
+
+    basename = "indochina-2004"
+    urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
+    k = 10
+    idx = train_search(X)
+    check(kmeans.centroids, k, X, idx, urls_file, entities_list)
