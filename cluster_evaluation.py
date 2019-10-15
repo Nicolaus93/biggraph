@@ -1,22 +1,9 @@
-import h5py
 import numpy as np
 from pathlib import Path
-from utils.helper import iter_partitions
+from utils.helper import load_data
 from sklearn import metrics
 from sklearn.cluster import KMeans
-
-
-def load_data(model_path):
-
-    x_arrays = []
-    y_arrays = []
-    for partition, count in iter_partitions(model_path):
-        h5f = h5py.File(partition, 'r')
-        X = h5f["embeddings"].value
-        Y = h5f["labels"].value
-        x_arrays.append(X)
-        y_arrays.append(Y)
-    return np.vstack(x_arrays), np.hstack(y_arrays)
+import faiss
 
 
 def bench_k_means(estimator, name, data, labels):
@@ -51,10 +38,18 @@ if __name__ == "__main__":
                                      sample_size=1000)
     print("silhouette_score: {}".format(score))
     print("")
-    algo = KMeans(init='k-means++', n_clusters=classes, n_init=10,
-                  max_iter=1000)
-    bench_k_means(algo, "k-means++", X, Y)
-    print("")
-    algo = KMeans(init='random', n_clusters=classes, n_init=10,
-                  max_iter=1000)
-    bench_k_means(algo, "random", X, Y)
+
+    ncentroids = 5
+    niter = 100
+    verbose = True
+    d = X.shape[1]
+    kmeans = faiss.Kmeans(d, ncentroids, niter=niter, verbose=verbose)
+    kmeans.train(X)
+
+    # algo = KMeans(init='k-means++', n_clusters=classes, n_init=10,
+    #               max_iter=1000)
+    # bench_k_means(algo, "k-means++", X, Y)
+    # print("")
+    # algo = KMeans(init='random', n_clusters=classes, n_init=10,
+    #               max_iter=1000)
+    # bench_k_means(algo, "random", X, Y)
