@@ -51,6 +51,7 @@ if __name__ == "__main__":
     print("{} classes.".format(classes))
     score = metrics.silhouette_score(X, Y, metric='euclidean',
                                      sample_size=1000)
+    print("silhouette_score: {}".format(score))
     print("")
     algo = KMeans(init='k-means++', n_clusters=classes, n_init=10,
                   max_iter=1000)
