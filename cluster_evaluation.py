@@ -13,7 +13,7 @@ def load_data(model_path):
     for partition, count in iter_partitions(model_path):
         h5f = h5py.File(partition, 'r')
         X = h5f["embeddings"].value
-        Y = h5f["labels"].values
+        Y = h5f["labels"].value
         x_arrays.append(X)
         y_arrays.append(Y)
     return np.vstack(x_arrays), np.hstack(y_arrays)
