@@ -1,4 +1,3 @@
-import faiss
 import numpy as np
 import linecache
 import json
@@ -6,18 +5,7 @@ import h5py
 import argparse
 # from pathlib import Path
 from os.path import join
-
-
-def train_search(data):
-    """train similarity search model
-        as explained in faiss tutorial.
-    """
-    nb, d = data.shape
-    index = faiss.IndexFlatL2(d)   # build the index
-    print("Index trained: {}".format(index.is_trained))
-    index.add(data)                  # add vectors to the index
-    print("Index total: {}".format(index.ntotal))
-    return index
+from utils.helper import train_search
 
 
 def check(nodes, k, emb, ind, f, ent_list):
@@ -62,7 +50,7 @@ if __name__ == '__main__':
         entities_list = json.load(tf)
 
     hf = h5py.File(join(model_path, "embeddings_link_0.v50.h5"), 'r')
-    x = hf["embeddings"].value
+    x = hf["embeddings"][:]
     idx = train_search(x)
     nodes = np.random.randint(0, len(x), size=5)
     k = 6
