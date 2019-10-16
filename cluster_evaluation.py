@@ -40,7 +40,7 @@ if __name__ == "__main__":
                         help="number of iterations")
     parser.add_argument('-v', "--verbose", default=True,
                         help="verbosity")
-    parser.add_argument("-k" "--k_nearest", default=20,
+    parser.add_argument("-k", "--knearest", type=int, default=20,
                         help="k centroids nearest neighbours")
 
     args = parser.parse_args()
