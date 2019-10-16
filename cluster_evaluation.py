@@ -48,7 +48,7 @@ if __name__ == "__main__":
     ncentroids = args.n
     niter = args.it
     verbose = args.verbose
-    k = args.k_nearest
+    k = args.knearest
 
     model_path = Path("/data/models") / basename
     print("Loading data..")
