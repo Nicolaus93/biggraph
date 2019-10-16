@@ -1,12 +1,12 @@
 import numpy as np
 import faiss
 import json
+import argparse
 from pathlib import Path
 from utils.helper import load_data, iter_partitions, train_search
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from check_result import check
-from os.path import join
 
 
 def bench_k_means(estimator, name, data, labels):
@@ -30,8 +30,27 @@ def bench_k_means(estimator, name, data, labels):
 
 
 if __name__ == "__main__":
-    # todo: add argparse
-    model_path = Path("/data/models/indochina-2004")
+    parser = argparse.ArgumentParser(
+        description='Use Kmeans on given graph embeddings.')
+    parser.add_argument('-b', '--basename', type=str, default='indochina-2004',
+                        help='name of the graph to use')
+    parser.add_argument('-n', type=int, default=5,
+                        help='number of centroids')
+    parser.add_argument('-it', type=int, default=50,
+                        help="number of iterations")
+    parser.add_argument('-v', "--verbose", default=True,
+                        help="verbosity")
+    parser.add_argument("-k" "--k_nearest", default=20,
+                        help="k centroids nearest neighbours")
+
+    args = parser.parse_args()
+    basename = args.basename
+    ncentroids = args.n
+    niter = args.it
+    verbose = args.verbose
+    k = args.k
+
+    model_path = Path("/data/models") / basename
     print("Loading data..")
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
@@ -42,9 +61,6 @@ if __name__ == "__main__":
     print("silhouette_score: {}".format(score))
     print("")
 
-    ncentroids = 5
-    niter = 100
-    verbose = True
     d = X.shape[1]
     kmeans = faiss.Kmeans(d, ncentroids, niter=niter, verbose=verbose)
     kmeans.train(X)
@@ -63,9 +79,6 @@ if __name__ == "__main__":
             entities = json.load(f)
         entities_list += [i for i in entities]
 
-    basename = "indochina-2004"
-    # urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
-    urls_file = join('/data/graphs/', basename, (basename + '.urls'))
-    k = 50
+    urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
     idx = train_search(X)
-    check(kmeans.centroids, k, X, idx, urls_file, entities_list)
+    check(kmeans.centroids, k, X, idx, str(urls_file), entities_list)
