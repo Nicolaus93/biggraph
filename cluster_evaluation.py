@@ -81,4 +81,4 @@ if __name__ == "__main__":
 
     urls_file = Path('/data/graphs/', basename, (basename + '.urls'))
     idx = train_search(X)
-    check(kmeans.centroids, k, X, idx, str(urls_file), entities_list)
+    check(kmeans.centroids, k, X, idx, urls_file.as_posix(), entities_list)
