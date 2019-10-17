@@ -1,7 +1,6 @@
 import json
 import h5py
 import numpy as np
-import faiss
 
 
 def iter_partitions(model_path, names=False):
@@ -37,19 +36,17 @@ def load_data(model_path):
     for partition, count in iter_partitions(model_path):
         h5f = h5py.File(partition, 'r')
         X = h5f["embeddings"][:]
-        Y = h5f["labels"][:]
         x_arrays.append(X)
-        y_arrays.append(Y)
-    return np.vstack(x_arrays), np.hstack(y_arrays)
-
-
-def train_search(data):
-    """train similarity search model
-        as explained in faiss tutorial.
-    """
-    nb, d = data.shape
-    index = faiss.IndexFlatL2(d)   # build the index
-    print("Index trained: {}".format(index.is_trained))
-    index.add(data)                  # add vectors to the index
-    print("Index total: {}".format(index.ntotal))
-    return index
+        try:
+            Y = h5f["labels"][:]
+            y_arrays.append(Y)
+        except KeyError:
+            print("Labels not defined")
+    if len(y_arrays) > 0:
+        X = np.vstack(x_arrays)
+        Y = np.hstack(y_arrays)
+        return X, Y
+    else:
+        X = np.vstack(x_arrays)
+        Y = np.zeros(len(X))
+        return X, Y
