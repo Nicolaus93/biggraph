@@ -1,6 +1,7 @@
 import json
 import h5py
 import numpy as np
+from pathlib import Path
 
 
 def iter_partitions(model_path, names=False):
@@ -50,3 +51,13 @@ def load_data(model_path):
         X = np.vstack(x_arrays)
         Y = np.zeros(len(X))
         return X, Y
+
+
+def get_entities_list(basename):
+    entities_list = []
+    model_path = Path("/data/models") / basename
+    for json_f, _ in iter_partitions(model_path, names=True):
+        with open(json_f, "rt") as f:
+            entities = json.load(f)
+        entities_list += [int(i) for i in entities]
+    return entities_list
