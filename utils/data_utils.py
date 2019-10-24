@@ -2,6 +2,7 @@ import json
 import h5py
 import numpy as np
 from pathlib import Path
+from tqdm import trange
 
 
 def iter_partitions(model_path, names=False):
@@ -61,3 +62,50 @@ def get_entities_list(basename):
             entities = json.load(f)
         entities_list += [int(i) for i in entities]
     return entities_list
+
+
+def read_ascii_graph(basename, rm_singleton=False):
+    """
+    Input:
+        basename (str)      - name of the graph
+        rm_singleton (bool) - whether to remove singleton nodes
+    Output:
+        out_nodes (list) - list of numpy arrays containing
+            the out nodes of every node in the graph
+        in_nodes (list)  - list of numpy arrays containing
+            the in nodes of every node in the graph
+        out_degree       - list of out degrees of nodes
+        in_degree        - list of in degrees of nodes
+    TODO: remove nodes with no links?
+    """
+    ascii_path = Path("/data/graphs") / basename / ("ascii.graph-txt")
+    assert ascii_path.exists(), "Graph not found!"
+    with ascii_path.open() as f:
+        line = f.readline()
+        line_tot = int(line.split()[0])
+        print("{} lines".format(line_tot))
+        print("reading..")
+        out_nodes = [0] * line_tot
+        in_nodes = [0] * line_tot
+        out_degree = [0] * line_tot
+        for i in trange(line_tot):
+            line = f.readline()
+            if line[0] == '\n' and not rm_singleton:
+                # don't remove singleton
+                # assume node is linked to itself
+                in_ = np.array([i])
+                out_ = np.array([i])
+            else:
+                in_ = np.fromstring(line, dtype=int, sep=' ')
+                out_ = np.ones(len(in_), dtype=int) * i
+            out_nodes[i] = out_
+            in_nodes[i] = in_
+            out_degree[i] = len(out_)
+    print("finished reading, now preprocessing..")
+    out_nodes = np.hstack(out_nodes)
+    in_nodes = np.hstack(in_nodes)
+    unique_elements, in_degree_temp = np.unique(in_nodes, return_counts=True)
+    # some nodes might have in_degree = 0
+    in_degree = np.zeros(len(out_degree))
+    in_degree[unique_elements] = in_degree_temp
+    return out_nodes, in_nodes, out_degree, in_degree
