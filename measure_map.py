@@ -1,37 +1,99 @@
 import numpy as np
-from utils.data_utils import read_ascii_graph
-from pathlib import Path
+from utils.data_utils import *
+from utils.faiss_utils import train_search
+from tqdm import tqdm
 
 
-def precision(Na, Ra_bi, bi):
+def precision_score(node_ranking, neighs):
     """
-    Assuming Na and Ra_bi are 2
-    arrays of indices.
+    Compute the precision score as explained in
+    https://dawn.cs.stanford.edu/2018/03/19/hyperbolics/
+    Input:
+        - node_ranking (np.array)
+        - neighs (list)
+    Output:
+        - precision score (float)
     """
-    set1 = set(Na)
-    index = np.where(Ra_bi == bi)[0][0]
-    set2 = set(Ra_bi[:index + 1])
-    return len(set1.intersection(set2) / len(set2))
+    # note: positions starting from 1 --> add 1
+    neighs_ranks = np.in1d(node_ranking, neighs).nonzero()[0] + 1
+    neighs_card = np.arange(len(neighs_ranks)) + 1
+    node_score = neighs_card / neighs_ranks
+    return node_score.sum() / len(neighs)
 
 
-def map(graph):
-
-    out_nodes, in_nodes, out_degree, in_degree = read_ascii_graph(graph)
-    print("Computing map score")
-    V = len(out_nodes)
+def map_score(X, nodes, ind, neigh_num=50):
+    """
+    Compute the map score of the given embedding.
+    If the number of neighbours of the current node
+    is bigger than the one given as input, returns
+    the current node as an outlier.
+    Input:
+        - X (np.array), embeddings
+        - nodes (list[list]), neighbours of each node
+        - ind (faiss index), index used to compute L2
+                            distances for the embeddings
+        - neigh_num (int), number of neighbours considered
+    Output:
+        - score (float), map score
+        - outliers (list)
+        - singleton, number of singleton nodes
+    """
+    outliers = []
     score = 0
-    for node in graph:
-        node_score = 0
-        Na = len(out_nodes)
-        for neighbor in node.neighbours:
-            node_score += precision(node, neighbor)
-        score += node_score / Na
-    return score / V
+    singleton = 0
+    _, ranking = ind.search(X, neigh_num)
+    for node, neighs in enumerate(nodes):
+        Na = len(neighs)
+        if Na == 0:
+            singleton += 1
+        elif Na > neigh_num // 2:
+            outliers.append(node)
+        else:
+            # start from index=1 to not consider the node itself
+            Ra = ranking[node, 1:]
+            score += precision_score(Ra, neighs)
+    return score, outliers, singleton
+
+
+def dataset_map(X, out_nodes, neighs=50):
+    """
+    Compute the MAP score on all the embeddings
+    given as input.
+    """
+    ind = train_search(X)
+    if len(X) > 10000:
+        n = 10000
+        iters = len(X) // n
+        splits = np.array_split(X, iters)
+        out_node_split = np.array_split(out_nodes, iters)
+    else:
+        iters = 1
+        splits = X
+        out_node_split = out_nodes
+    score = 0
+    singleton = 0
+    for data, nodes in tqdm(zip(splits, out_node_split), total=iters):
+        split_score, outliers, sing = map_score(
+            data, nodes, ind, neigh_num=neighs)
+        singleton += sing
+        score += split_score
+        while len(outliers) > 0:
+            neighs *= 2
+            split_score, outliers, _ = map_score(
+                data[outliers], nodes[outliers], ind, neigh_num=neighs)
+            score += split_score
+    return score / (len(X) - singleton)
 
 
 if __name__ == "__main__":
 
     basename = "cnr-2000"
-    graph = Path("/data/graphs") / basename / ("ascii.graph-txt")
-    map_score = map(basename)
-    print(map_score)
+    embeddings = load_XY(basename)
+    X = embeddings[0]
+    out_nodes = nodes_from_ascii(basename)
+    assert len(X) == len(out_nodes)
+    ent_list = get_entities_list(basename)
+    perm = np.argsort(ent_list)
+    X = X[perm]
+    ind = train_search(X)
+    print(dataset_map(X, out_nodes))
