@@ -32,6 +32,12 @@ def iter_partitions(model_path, names=False):
 def load_data(model_path):
     """
     Load data saved in model_path.
+    Input:
+        - model_path (Path)
+    Output:
+        - X (np.array), embeddings
+        - Y (np.array), labels (if possible)
+                        otherwise array of zeros.
     """
     x_arrays = []
     y_arrays = []
@@ -64,7 +70,45 @@ def get_entities_list(basename):
     return entities_list
 
 
-def read_ascii_graph(basename, rm_singleton=False):
+def create(n, constructor=list):
+    for _ in range(n):
+        yield constructor()
+
+
+def nodes_from_ascii(basename, in_nodes=False):
+    """
+    Read nodes from ascii file.
+    Input:
+        - basename (str), name of the graph
+        - in_nodes (bool), if True return in_nodes
+    Output:
+        nodes (list), list of out_nodes
+                    (in_nodes) if in_nodes=True
+    """
+    ascii_path = Path("/data/graphs") / basename / ("ascii.graph-txt")
+    assert ascii_path.exists(), "Graph not found!"
+    with ascii_path.open() as f:
+        line = f.readline()
+        V = int(line.split()[0])
+        print("{} vertices".format(V))
+        print("reading..")
+        nodes = list(create(V))
+        singleton = 0
+        for i in trange(V):
+            line = f.readline()
+            if line[0] == "\n":
+                singleton += 1
+            else:
+                if in_nodes:
+                    for node in line.split():
+                        nodes[int(node)].append(i)
+                else:
+                    nodes[i] = [int(j) for j in line.split()]
+        print("Found {} singleton nodes".format(singleton))
+    return nodes
+
+
+def edges_from_ascii(basename, rm_singleton=False):
     """
     Input:
         basename (str)      - name of the graph
