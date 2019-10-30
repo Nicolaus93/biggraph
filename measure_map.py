@@ -4,6 +4,19 @@ from utils.faiss_utils import train_search
 from tqdm import tqdm
 
 
+def load_XY(basename):
+    """
+    Load embeddings (X) and possibly the
+    labels (Y) of the graph {basename}.
+    """
+    model_path = Path("/data/models") / basename
+    print("Loading data..")
+    X, Y = load_data(model_path)
+    classes = len(np.unique(Y))
+    print("X shape: {}".format(X.shape))
+    return X, Y
+
+
 def precision_score(node_ranking, neighs):
     """
     Compute the precision score as explained in
