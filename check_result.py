@@ -55,7 +55,8 @@ if __name__ == '__main__':
     nodes_id = np.random.randint(len(x), size=5)
     nodes = x[nodes_id, :]
     k = 6
-    urls_file = Path('/data/graphs/') / basename / (basename + '.urls')
+    # urls_file = Path('/data/graphs/') / basename / (basename + '.urls')
+    urls_file = Path("/data/graphs") / basename / "itwiki-2013.ids"
     try:
         check(nodes, k, x, idx, str(urls_file), entities_list)
     except Exception as e:
