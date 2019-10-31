@@ -49,8 +49,7 @@ if __name__ == '__main__':
     with (model_path / "entity_names_link_0.json").open() as tf:
         entities_list = json.load(tf)
 
-    hf = h5py.File(model_path / "embeddings_link_0.v50.h5")
-    print(hf.keys())
+    hf = h5py.File(model_path / "embeddings_link_0.v200.h5")
     x = hf["embeddings"][:]
     idx = train_search(x)
     nodes_id = np.random.randint(len(x), size=5)
