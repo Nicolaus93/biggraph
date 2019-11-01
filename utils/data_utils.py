@@ -29,6 +29,18 @@ def iter_partitions(model_path, names=False):
             yield model_path / "entity_names_link_{}.json".format(i), count
 
 
+def iter_embeddings(model_path, h5=True):
+    """
+    updated version of iter_partitions
+    """
+    if h5:
+        for h5_file in model_path.glob('embeddings_link*.h5'):
+            yield h5_file
+    else:
+        for json_file in model_path.glob('entity_names_link_*.json'):
+            yield json_file
+
+
 def load_data(model_path):
     """
     Load data saved in model_path.
@@ -41,7 +53,7 @@ def load_data(model_path):
     """
     x_arrays = []
     y_arrays = []
-    for partition, count in iter_partitions(model_path):
+    for partition in iter_embeddings(model_path):
         h5f = h5py.File(partition, 'r')
         X = h5f["embeddings"][:]
         x_arrays.append(X)
