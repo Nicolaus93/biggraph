@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 from utils.data_utils import *
 from utils.faiss_utils import train_search
 from tqdm import tqdm
@@ -14,6 +15,7 @@ def load_XY(basename):
     X, Y = load_data(model_path)
     classes = len(np.unique(Y))
     print("X shape: {}".format(X.shape))
+    print("{} classes".format(classes))
     return X, Y
 
 
@@ -99,8 +101,12 @@ def dataset_map(X, out_nodes, neighs=50):
 
 
 if __name__ == "__main__":
-
-    basename = "cnr-2000"
+    parser = argparse.ArgumentParser(
+        description='Measure mean average precision of produced embeddings.')
+    parser.add_argument('-b', '--basename', type=str, default='indochina-2004',
+                        help='name of the graph to use')
+    args = parser.parse_args()
+    basename = args.basename
     embeddings = load_XY(basename)
     X = embeddings[0]
     out_nodes = nodes_from_ascii(basename)
