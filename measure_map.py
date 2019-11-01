@@ -110,9 +110,10 @@ if __name__ == "__main__":
     embeddings = load_XY(basename)
     X = embeddings[0]
     ent_list = get_entities_list(basename)
-    perm = np.argsort(ent_list)
-    X = X[perm]
+    # perm = np.argsort(ent_list)
+    # X = X[perm]
     out_nodes = nodes_from_ascii(basename)
+    out_nodes = [out_nodes[i] for i in ent_list]
     assert len(X) == len(out_nodes)
     ind = train_search(X)
     print(dataset_map(X, out_nodes))
