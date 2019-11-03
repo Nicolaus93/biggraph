@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # except Exception as e:
     #     print(e)
     print(model_path.glob("embeddings_link_0*.h5"))
-    hf_path = model_path.glob("embeddings_link_0*.h5")[0]
+    hf_path = list(model_path.glob("embeddings_link_0*.h5"))[0]
     hf = h5py.File(hf_path)
     x = hf["embeddings"][:]
     idx = train_search(x)
