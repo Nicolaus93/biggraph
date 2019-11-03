@@ -4,15 +4,13 @@ import json
 import h5py
 import argparse
 from pathlib import Path
-# from os.path import join
 from utils.faiss_utils import train_search
 
 
-def check(nodes, k, emb, ind, f, ent_list):
+def check(nodes, k, ind, f, ent_list):
     """
     nodes    - 2d array of nodes we want to check
     k        - nearest neighbours
-    emb      - a 2-d numpy array of embeddings
     ind      - index built with faiss
     f        - file containing urls
     ent_list - list of entities id
@@ -38,27 +36,32 @@ def check(nodes, k, emb, ind, f, ent_list):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Generate embeddings on given graph.')
-    parser.add_argument('--basename', type=str, default='cnr-2000',
-                        help='name of the graph to use')
+    parser.add_argument('basename', help='name of the graph to use')
+    parser.add_argument('format', help='file format storing original data.')
 
     args = parser.parse_args()
     basename = args.basename
+    f_format = args.format
+    assert f_format == 'ids' or f_format == 'urls', "not the right format!"
     model_path = Path("/data/models") / basename
-    assert model_path.is_dir(), "model dir not found"
-
+    assert model_path.is_dir(), "model directory not found"
     with (model_path / "entity_names_link_0.json").open() as tf:
         entities_list = json.load(tf)
-
-    hf = h5py.File(model_path / "embeddings_link_0.v200.h5")
+    try:
+        hf_path = model_path.glob("embeddings_link_0*.h5")[0]
+    except Exception as e:
+        print(e)
+    hf = h5py.File(hf_path)
     x = hf["embeddings"][:]
     idx = train_search(x)
     nodes_id = np.random.randint(len(x), size=5)
     nodes = x[nodes_id, :]
     k = 6
+    ids_file = Path("/data/graphs") / basename / (basename + '.' + f_format)
     # urls_file = Path('/data/graphs/') / basename / (basename + '.urls')
-    urls_file = Path("/data/graphs") / basename / "itwiki-2013.ids"
+    # urls_file = Path("/data/graphs") / basename / "itwiki-2013.ids"
     try:
-        check(nodes, k, x, idx, str(urls_file), entities_list)
+        check(nodes, k, idx, str(ids_file), entities_list)
     except Exception as e:
         print("e")
         print("urls file not found!")
