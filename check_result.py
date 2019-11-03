@@ -47,10 +47,12 @@ if __name__ == '__main__':
     assert model_path.is_dir(), "model directory not found"
     with (model_path / "entity_names_link_0.json").open() as tf:
         entities_list = json.load(tf)
-    try:
-        hf_path = model_path.glob("embeddings_link_0*.h5")[0]
-    except Exception as e:
-        print(e)
+    # try:
+    #     hf_path = model_path.glob("embeddings_link_0*.h5")[0]
+    # except Exception as e:
+    #     print(e)
+    print(model_path.glob("embeddings_link_0*.h5"))
+    hf_path = model_path.glob("embeddings_link_0*.h5")[0]
     hf = h5py.File(hf_path)
     x = hf["embeddings"][:]
     idx = train_search(x)
