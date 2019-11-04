@@ -7,7 +7,7 @@ from pathlib import Path
 from utils.faiss_utils import train_search
 
 
-def check(nodes, k, ind, f, ent_list):
+def check(nodes, k, idx, f, ent_list):
     """
     nodes    - 2d array of nodes we want to check
     k        - nearest neighbours
@@ -19,9 +19,9 @@ def check(nodes, k, ind, f, ent_list):
 
     """
     if len(nodes) == 1:
-        dist, ind = ind.search(nodes.reshape(1, -1), k)
+        dist, ind = idx.search(nodes.reshape(1, -1), k)
     else:
-        dist, ind = ind.search(nodes, k)
+        dist, ind = idx.search(nodes, k)
     for row in ind:
         source = int(ent_list[row[0]])
         print('\x1b[0;35;43m' + '{} nearest neighbours of node {}'.format(
@@ -38,7 +38,6 @@ if __name__ == '__main__':
         description='Generate embeddings on given graph.')
     parser.add_argument('basename', help='name of the graph to use')
     parser.add_argument('format', help='file format storing original data.')
-
     args = parser.parse_args()
     basename = args.basename
     f_format = args.format
@@ -47,11 +46,6 @@ if __name__ == '__main__':
     assert model_path.is_dir(), "model directory not found"
     with (model_path / "entity_names_link_0.json").open() as tf:
         entities_list = json.load(tf)
-    # try:
-    #     hf_path = model_path.glob("embeddings_link_0*.h5")[0]
-    # except Exception as e:
-    #     print(e)
-    print(model_path.glob("embeddings_link_0*.h5"))
     hf_path = list(model_path.glob("embeddings_link_0*.h5"))[0]
     hf = h5py.File(hf_path)
     x = hf["embeddings"][:]
@@ -60,8 +54,6 @@ if __name__ == '__main__':
     nodes = x[nodes_id, :]
     k = 6
     ids_file = Path("/data/graphs") / basename / (basename + '.' + f_format)
-    # urls_file = Path('/data/graphs/') / basename / (basename + '.urls')
-    # urls_file = Path("/data/graphs") / basename / "itwiki-2013.ids"
     try:
         check(nodes, k, idx, str(ids_file), entities_list)
     except Exception as e:

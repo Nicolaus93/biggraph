@@ -20,7 +20,7 @@ def get_torchbiggraph_config():
 
         # Graph structure
         entities={
-            'link': {'num_partitions': 10},
+            'link': {'num_partitions': 1},
         },
         relations=[{
             'name': 'follow',
@@ -33,11 +33,11 @@ def get_torchbiggraph_config():
         dynamic_relations=False,
 
         # Scoring model
-        dimension=64,
+        dimension=128,
         global_emb=False,
 
         # Training
-        num_epochs=200,
+        num_epochs=100,
         num_uniform_negs=100,
         loss_fn='softmax',
         lr=0.01,

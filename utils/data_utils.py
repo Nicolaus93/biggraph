@@ -32,6 +32,7 @@ def iter_partitions(model_path, names=False):
 def iter_embeddings(model_path, h5=True):
     """
     updated version of iter_partitions
+    NOTICE: returns objects NOT ordered
     """
     if h5:
         for h5_file in model_path.glob('embeddings_link*.h5'):
@@ -82,11 +83,6 @@ def get_entities_list(basename):
     return entities_list
 
 
-def create(n, constructor=list):
-    for _ in range(n):
-        yield constructor()
-
-
 def nodes_from_ascii(basename, in_nodes=False):
     """
     Read nodes from ascii file.
@@ -104,7 +100,7 @@ def nodes_from_ascii(basename, in_nodes=False):
         V = int(line.split()[0])
         print("{} vertices".format(V))
         print("reading..")
-        nodes = list(create(V))
+        nodes = [list() for i in range(V)]
         singleton = 0
         for i in trange(V):
             line = f.readline()
