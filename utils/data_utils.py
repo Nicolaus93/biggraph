@@ -34,12 +34,16 @@ def iter_embeddings(model_path, h5=True):
     updated version of iter_partitions
     NOTICE: returns objects NOT ordered
     """
+    temp = []
     if h5:
         for h5_file in model_path.glob('embeddings_link*.h5'):
-            yield h5_file
+            temp.append(h5_file)
     else:
         for json_file in model_path.glob('entity_names_link_*.json'):
-            yield json_file
+            temp.append(json_file)
+    temp = sorted(temp)
+    for i in temp:
+        yield i
 
 
 def load_data(model_path):
