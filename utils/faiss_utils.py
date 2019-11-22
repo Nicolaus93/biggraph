@@ -1,4 +1,7 @@
 import faiss
+import linecache
+from pathlib import Path
+from data_utils import get_entities_list
 
 
 def train_search(data):
@@ -34,3 +37,31 @@ def PCA(X, out=2):
     assert mat.is_trained
     tr = mat.apply_py(X)
     return tr
+
+
+def centroid_neigh(basename, k_means, X, n=15):
+    """
+    Find the n-nearest neighbours to k-means
+    cluster centroids.
+    """
+    d = X.shape[1]
+    index = faiss.IndexFlatL2(d)
+    index.add(X)
+    D, Ind = index.search(k_means.centroids, n)
+    entities = get_entities_list(basename)
+    find_neighbours(basename, Ind, entities)
+
+
+def find_neighbours(basename, idx, ent_list):
+    """
+    Helper function for centroid_neigh.
+    """
+    ids_file = Path('/data/graphs/') / basename / (basename + '.urls')
+    if not ids_file.exist():
+        ids_file = Path('/data/graphs/') / basename / (basename + '.ids')
+    f = ids_file.as_posix()
+    for pos, cluster in enumerate(idx):
+        print("\x1b[0;35;43m Cluster {} \x1b[0m".format(pos))
+        for node in cluster:
+            line = ent_list[node]
+            print(linecache.getline(f, line + 1))
