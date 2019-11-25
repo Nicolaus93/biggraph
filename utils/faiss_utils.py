@@ -57,8 +57,9 @@ def find_neighbours(basename, idx, ent_list):
     Helper function for centroid_neigh.
     """
     ids_file = Path('/data/graphs/') / basename / (basename + '.urls')
-    if not ids_file.exist():
+    if not ids_file.exists():
         ids_file = Path('/data/graphs/') / basename / (basename + '.ids')
+    assert ids_file.exists(), "File not found!"
     f = ids_file.as_posix()
     for pos, cluster in enumerate(idx):
         print("\x1b[0;35;43m Cluster {} \x1b[0m".format(pos))
