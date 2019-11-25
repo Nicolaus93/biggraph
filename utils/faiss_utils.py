@@ -39,7 +39,7 @@ def PCA(X, out=2):
     return tr
 
 
-def centroid_neigh(basename, k_means, X, n=15):
+def centroid_neigh(basename, k_means, X, entities, n=15):
     """
     Find the n-nearest neighbours to k-means
     cluster centroids.
@@ -48,7 +48,6 @@ def centroid_neigh(basename, k_means, X, n=15):
     index = faiss.IndexFlatL2(d)
     index.add(X)
     D, Ind = index.search(k_means.centroids, n)
-    entities = get_entities_list(basename)
     find_neighbours(basename, Ind, entities)
 
 
