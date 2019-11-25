@@ -1,7 +1,7 @@
 import faiss
 import linecache
 from pathlib import Path
-from data_utils import get_entities_list
+from utils.data_utils import get_entities_list
 
 
 def train_search(data):
