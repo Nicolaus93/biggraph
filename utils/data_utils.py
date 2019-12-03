@@ -5,30 +5,6 @@ from pathlib import Path
 from tqdm import trange
 
 
-def iter_partitions(model_path, names=False):
-    """
-    Returns the path of partitions and number of nodes in them,
-    if names is set to false. Otherwise returns nodes "names".
-    model_path - Path
-    names      - bool
-    """
-    config_dict = model_path / "config.json"
-    with config_dict.open() as tf:
-        config = json.load(tf)
-
-    # determine the number of partitions
-    num_partitions = config["entities"]["link"]["num_partitions"]
-    for i in range(num_partitions):
-        # count the nodes in each partition
-        count_file = model_path / "entity_count_link_{}.txt".format(i)
-        with open(count_file, "rt") as f:
-            count = int(f.readline())
-        if not names:
-            yield model_path / "embeddings_link_{}.v50.h5".format(i), count
-        else:
-            yield model_path / "entity_names_link_{}.json".format(i), count
-
-
 def iter_embeddings(model_path, h5=True):
     """
     updated version of iter_partitions
@@ -80,8 +56,8 @@ def load_data(model_path):
 def get_entities_list(basename):
     entities_list = []
     model_path = Path("/data/models") / basename
-    for json_f, _ in iter_partitions(model_path, names=True):
-        with open(json_f, "rt") as f:
+    for json_f in iter_embeddings(model_path, h5=False):
+        with json_f.open() as f:
             entities = json.load(f)
         entities_list += [int(i) for i in entities]
     return entities_list
