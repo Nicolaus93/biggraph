@@ -5,16 +5,16 @@ from pathlib import Path
 from tqdm import trange
 
 
-def iter_embeddings(model_path, h5=True):
+def iter_embeddings(model_path, kind='h5'):
     """
-    updated version of iter_partitions
-    NOTICE: returns objects NOT ordered
+    Updated version of iter_partitions
     """
     temp = []
-    if h5:
+    assert kind in ['h5', 'json'], "Uknown kind!"
+    if kind == 'h5':
         for h5_file in model_path.glob('embeddings_link*.h5'):
             temp.append(h5_file)
-    else:
+    elif kind == 'json':
         for json_file in model_path.glob('entity_names_link_*.json'):
             temp.append(json_file)
     temp = sorted(temp)
@@ -53,10 +53,12 @@ def load_data(model_path):
         return X, Y
 
 
-def get_entities_list(basename):
+def get_entities_list(model_path):
+    """
+    Returns mapping for embeddings.
+    """
     entities_list = []
-    model_path = Path("/data/models") / basename
-    for json_f in iter_embeddings(model_path, h5=False):
+    for json_f in iter_embeddings(model_path, kind='json'):
         with json_f.open() as f:
             entities = json.load(f)
         entities_list += [int(i) for i in entities]
@@ -94,50 +96,3 @@ def nodes_from_ascii(basename, in_nodes=False):
                     nodes[i] = [int(j) for j in line.split()]
         print("Found {} singleton nodes".format(singleton))
     return nodes
-
-
-def edges_from_ascii(basename, rm_singleton=False):
-    """
-    Input:
-        basename (str)      - name of the graph
-        rm_singleton (bool) - whether to remove singleton nodes
-    Output:
-        out_nodes (list) - list of numpy arrays containing
-            the out nodes of every node in the graph
-        in_nodes (list)  - list of numpy arrays containing
-            the in nodes of every node in the graph
-        out_degree       - list of out degrees of nodes
-        in_degree        - list of in degrees of nodes
-    TODO: remove nodes with no links?
-    """
-    ascii_path = Path("/data/graphs") / basename / ("ascii.graph-txt")
-    assert ascii_path.exists(), "Graph not found!"
-    with ascii_path.open() as f:
-        line = f.readline()
-        line_tot = int(line.split()[0])
-        print("{} lines".format(line_tot))
-        print("reading..")
-        out_nodes = [0] * line_tot
-        in_nodes = [0] * line_tot
-        out_degree = [0] * line_tot
-        for i in trange(line_tot):
-            line = f.readline()
-            if line[0] == '\n' and not rm_singleton:
-                # don't remove singleton
-                # assume node is linked to itself
-                in_ = np.array([i])
-                out_ = np.array([i])
-            else:
-                in_ = np.fromstring(line, dtype=int, sep=' ')
-                out_ = np.ones(len(in_), dtype=int) * i
-            out_nodes[i] = out_
-            in_nodes[i] = in_
-            out_degree[i] = len(out_)
-    print("finished reading, now preprocessing..")
-    out_nodes = np.hstack(out_nodes)
-    in_nodes = np.hstack(in_nodes)
-    unique_elements, in_degree_temp = np.unique(in_nodes, return_counts=True)
-    # some nodes might have in_degree = 0
-    in_degree = np.zeros(len(out_degree))
-    in_degree[unique_elements] = in_degree_temp
-    return out_nodes, in_nodes, out_degree, in_degree
